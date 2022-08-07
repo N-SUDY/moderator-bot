@@ -36,7 +36,7 @@ Logging admin command actions in database.
 | `vt_api`                          | VirusTotalAPI token (optionaly)  |
 
 ## TODO  
-- [x] System rules                             🔒      
+- [x] System roles                              🔒      
 - [ ] Analys file for malware                   🔎  
 - [ ] Paste text to PasteBin or PrivNote        📋
 - [ ] Site for group moderator                  🌍
