@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "moderator_bot"
+version = "0.1.0"
+description = "Telegram bot for moderation of Telegram groups."
+authors = ["hok7z <hok7zv@tutanota.com>"]
+license = "GPL3"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiogram = "^2.20"
+peewee = "^3.14.10"
+rich = "^12.4.4"
+environs = "^9.5.0"
+requests = "^2.27.1"
+Telethon = "^1.24.0"
+psycopg2 = "^2.9.3"
+aioschedule = "^0.5.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
