@@ -4,8 +4,6 @@ from aiogram import executor
 from database import models
 
 from load import dp, bot
-from load import loop,tgc
-
 import handlers
 import config
 
@@ -26,11 +24,11 @@ async def on_startup(dp):
     
     from utils.default_commands import set_default_commands
     await set_default_commands(dp)
+    
+    from load import tgc
+    await tgc.client.start()
 
     await bot.set_webhook(WEBHOOK_URL)
-    
-    # Connect to client
-    await tgc._connect()
 
 async def on_shutdown(dp):
     await bot.delete_webhook()
@@ -48,7 +46,6 @@ def main() -> None:
             webhook_path=WEBHOOK_PATH,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
-            loop = loop,
             skip_updates=True,
             host=WEBAPP_HOST,
             port=WEBAPP_PORT,

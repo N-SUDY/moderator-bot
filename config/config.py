@@ -15,7 +15,7 @@ group_id = env.str("group_id")
 telegram_log_chat_id = env.str("log_group_id")
 
 # Telegram Application
-api_id = env.str("api_id")
+api_id = env.int("api_id")
 api_hash = env.str("api_hash")
 
 # Virus Total API

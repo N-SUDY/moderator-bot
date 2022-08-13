@@ -8,3 +8,4 @@ modules/__pycache__
 .env
 pyrightconfig.json
 session.session
+session.session-journal

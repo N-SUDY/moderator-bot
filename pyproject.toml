@@ -12,9 +12,10 @@ peewee = "^3.14.10"
 rich = "^12.4.4"
 environs = "^9.5.0"
 requests = "^2.27.1"
-Telethon = "^1.24.0"
 psycopg2 = "^2.9.3"
 aioschedule = "^0.5.2"
+Pyrogram = "^2.0.38"
+TgCrypto = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 

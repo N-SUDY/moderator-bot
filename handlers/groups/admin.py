@@ -13,9 +13,6 @@ import json
 from dataclasses import dataclass
 
 
-# TODO:Automatic malware checking with VirusTotal(add skipping queue virustotal report)
-# vt = utils.VirusTotalAPI(config.vt_api,True)
-
 def getArgument(arguments:list,index:int=0) -> str | None:
     """ Get element from a list.If element not exist return None """
     if not (arguments):
@@ -377,13 +374,13 @@ async def reload(message:types.Message):
     if group_permissions.keys() != data["group_permissions"].keys():
         await message.answer("Add some permissions to roles.json")
         return
-   
+
     for permission in group_permissions.keys():
         data["group_permissions"][permission] = group_permissions[permission]
     
     with open("config/roles.json", "w") as jsonfile:
         json.dump(data, jsonfile,indent=4)
-   
+
     await message.answer(f"✅ The synchronization was successful.")
 
 @dp.message_handler(commands=["srole"],commands_prefix="!",hasRights=True)
