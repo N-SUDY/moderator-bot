@@ -5,31 +5,6 @@ import config
 from load import database
 from database.models import Member
 
-
-@dp.message_handler(content_types=["new_chat_members"])
-async def welcome_message(message:types.Message):
-    # User
-    user = message.from_user 
-    
-    exists = database.check_data_exists(Member.user_id,user.id)
-    
-    if (exists):
-        await message.answer("Спасибо что вы с нами.")
-
-    if not (exists):
-        database.register_user(user.id,user.first_name,user.username)
-        # TODO: translate it    
-        await message.answer((
-            f"Привет,{user.first_name}\n"
-            "Просим ознакомится с [правилами](https://telegra.ph/Pravila-CHata-Open-Source-05-29)\n"
-            "Советы на 'хороший тон':\n"
-            "\t\t1.Формулируй свою мысль в 1-2 предложения\n"
-            "\t\t1.Не задавай [мета](nometa.xyz) вопросы\n"),
-        parse_mode="Markdown")
-    
-
-    await message.delete()
-
 @dp.message_handler(commands=["leave"],chat_type=[types.ChatType.SUPERGROUP])
 async def leave_group(message:types.Message):
     user = message.from_user
@@ -59,6 +34,7 @@ async def start_command_group(message:types.Message):
         parse_mode="Markdown"
     )
 
+
 @dp.message_handler(commands=["bio","me"],chat_type=[types.ChatType.SUPERGROUP])
 async def get_information(message: types.Message):
     user = database.search_single_member(Member.user_id,message.from_user.id)
@@ -74,6 +50,7 @@ async def get_information(message: types.Message):
         f"level:{role_level[user.role]}\n"),
         parse_mode="Markdown"
     )
+
 
 @dp.message_handler(commands=["report"],replied=True,chat_type=[types.ChatType.SUPERGROUP])
 async def report(message: types.Message):
@@ -97,8 +74,4 @@ async def report(message: types.Message):
         message.reply_to_message.link("Link message", as_html=False)
     ))
    
-    await bot.send_message(config.telegram_log_chat_id, msg, parse_mode="Markdown")
-
-@dp.message_handler(content_types=["left_chat_member"])
-async def event_left_chat(message:types.Message):
-    await message.delete()
+    await bot.send_message(config.second_group_id, msg, parse_mode="Markdown")

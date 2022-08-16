@@ -1,23 +1,23 @@
-from load import bot, dp, types
+from load import bot, database, dp, types
 from aiogram.types.chat_permissions import ChatPermissions
 
 import config
 import utils
 
-from load import database
 from database.models import Member
 
 import re
-import json
 
 from dataclasses import dataclass
 
+from database.models import MemberRoles
 
 def getArgument(arguments:list,index:int=0) -> str | None:
     """ Get element from a list.If element not exist return None """
     if not (arguments):
         return None
-    if (len(arguments) >= index):
+    
+    if (len(arguments) > index):
         return arguments[index]
     else:
         return None
@@ -29,12 +29,11 @@ class CommandArguments:
 
 async def getCommandArgs(message:types.Message) -> CommandArguments:
     """ Describe user data and arguments from message """
-
-    #Example:
-    #1.!command @username ... (not reply)
-    #2.!command (not_reply)
-    #3.!command ... (not reply)
     
+    """
+    !command (@username/id) reason=None
+    """
+
     arguments_list = message.text.split()[1:]
     
     is_reply = message.reply_to_message
@@ -67,24 +66,37 @@ def checkArg(message:str) -> bool | None:
     """ Check if first argument in ["enable","on","true"] then return true """
     if (not message):
         return None
-
-    argument = message.split()[1]
     
+    argument = message.split()
+    argument = getArgument(message.split(),1)
+    
+    if (argument is None):
+        return None
+
     on  = ['enable','on','true']
     off = ['disable','off','false']
-
-    return (argument in on) or (not argument in off)
+    
+    if (argument in on):
+        return True
+    if (argument in off):
+        return False
+    
 
 def delete_substring_from_string(string:str,substring:str) -> str:
     string_list = string.split(substring)
     return "".join(string_list).lstrip()
 
 # Filters:
-# is_admin=True - Check admin permission, if user is admin, continue
-# replied=True  - If message is answer, continue
+# is_admin=True - Check admin permission, if user is admin, continue.
+# replied=True  - If message is answer, continue.
+# accessed_roles - list roles.
 
-@dp.message_handler(commands=["ban"],commands_prefix="!",hasRights=True)
+@dp.message_handler(commands=["ban"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def ban_user(message: types.Message):
+    """
+    !ban (@username/id) reason=None
+    """
     command = await getCommandArgs(message)
     reason = getArgument(command.arguments)
 
@@ -94,7 +106,7 @@ async def ban_user(message: types.Message):
     # If can't descibe user data
     if (user is None):
         await message.answer((
-            "Usage:!ban @username reason=None"
+            "Usage:!ban (@username|id) reason=None.\n"
             "Reply to a message or use with a username.")
         )
         return
@@ -110,17 +122,22 @@ async def ban_user(message: types.Message):
     database.delete_user(user.user_id)
     
     # Open restrict
-    database.create_restriction(user.user_id, admin.id, "ban", reason)
+    database.create_restriction(admin.id, user.user_id, "ban", reason)
 
-@dp.message_handler(commands=["unban"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["unban"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def unban_user(message: types.Message):
+    """
+    !unban (@username/id) reason=None
+    """
     command = await getCommandArgs(message)
     user = command.user
 
     # If can't descibe user data
     if (user is None):
         await message.answer((
-            "Usage:!unban @username reason=None\n"
+            "Usage:!unban (@username|id) reason=None.\n"
             "Reply to a message or use with username/id.")
         )
         return
@@ -135,8 +152,14 @@ async def unban_user(message: types.Message):
         await message.answer(f"User [{user.first_name}](tg://user?id={user.user_id}) has been unbaned.",
             parse_mode="Markdown")
 
-@dp.message_handler(commands=["kick"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["kick"],commands_prefix="!",
+    available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def kick_user(message:types.Message):
+    """
+    !kick (@username/id) reason=None
+    """
+    
     command = await getCommandArgs(message)
     arguments = command.arguments
     
@@ -147,7 +170,7 @@ async def kick_user(message:types.Message):
 
     if (user is None):
         await message.answer((
-            "Usage:!kick @username reason=None\n"
+            "Usage:!kick (@username|id) reason=None.\n"
             "Reply to a message or use with a username/id.")
         )
         return
@@ -160,10 +183,16 @@ async def kick_user(message:types.Message):
         await message.answer(f"User [{user.first_name}](tg://user?id={user.user_id}) has been kicked.",
                 parse_mode="Markdown")
     
-    database.create_restriction(user.user_id,admin.id,"kick",reason)
+    database.create_restriction(admin.id,user.user_id,"kick",reason)
 
-@dp.message_handler(commands=["mute"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["mute"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN])
 async def mute_user(message:types.Message):
+    """
+    !mute (@username/id) reason=None
+    """ 
+    
     command = await getCommandArgs(message)  
     arguments = command.arguments
     
@@ -172,7 +201,7 @@ async def mute_user(message:types.Message):
 
     if (user is None):
         await message.answer((
-            "Usage:!mute @username time\n"
+            "Usage:!mute (@username|id) [duration].\n"
             "Reply to a message or use with a username/id.")
         )
         return
@@ -199,10 +228,15 @@ async def mute_user(message:types.Message):
         await message.answer(f"User **{user.first_name}** has been muted.",
             parse_mode="Markdown")
 
-    database.create_restriction(user.user_id,admin.id,"mute",reason)
+    database.create_restriction(user.user_id, admin.id, "mute", reason)
 
-@dp.message_handler(commands=["umute"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["umute"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN])
 async def umute_user(message: types.Message):
+    """
+    !umute (@username/id) reason=None
+    """
     # Get information
     command = await getCommandArgs(message)
     user = command.user
@@ -210,13 +244,13 @@ async def umute_user(message: types.Message):
     # If can't  
     if (user is None):
         await message.answer((
-            "Usage:!unmute @username reason=None\n"
+            "Usage:!unmute (@username|id) reason=None.\n"
             "Reply to a message or use with a username/id.")
         )
         return 
 
     # Get chat permissions
-    group_permissions = config.roles["group_permissions"]
+    group_permissions = config.group_permissions
 
     # Set permissions
     permissions = ChatPermissions(
@@ -241,12 +275,17 @@ async def umute_user(message: types.Message):
         await message.answer(f"User [{user.first_name}](tg://user?id={user.user_id}) has been unmuted.",
             parse_mode="Markdown")        
 
-@dp.message_handler(commands=["pin"],commands_prefix="!",hasRights=True)
+@dp.message_handler(commands=["pin"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def pin_message(message:types.Message):
     await bot.pin_chat_message(message.chat.id, message.reply_to_message.message_id)
 
-@dp.message_handler(commands=["ro"],commands_prefix="!",hasRights=True)
+@dp.message_handler(commands=["readonly","ro"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN])
 async def readonly_mode(message:types.Message):
+    """
+    !ro/!readonly (@username/id)
+    """
     check = checkArg(message.text)
     
     if (check is None):
@@ -254,7 +293,7 @@ async def readonly_mode(message:types.Message):
         return
 
     # Get chat permissions
-    group_permissions = config.roles["group_permissions"]
+    group_permissions = config.group_permissions
 
     # Set permissions
     if (check):
@@ -278,7 +317,9 @@ async def readonly_mode(message:types.Message):
     if (status):
         await message.answer(f"readonly - {check}")
 
-@dp.message_handler(commands=["media"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["media"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def media_content(message: types.Message):
     check = checkArg(message.text)
     
@@ -287,8 +328,8 @@ async def media_content(message: types.Message):
         return
 
     # Get chat permissions
-    group_permissions = config.roles["group_permissions"]
-
+    group_permissions = config.group_permissions
+    
     # Set permissions
     chat_permissions = ChatPermissions(
         can_send_messages=group_permissions['can_send_messages'],
@@ -307,8 +348,10 @@ async def media_content(message: types.Message):
     if status:
         await message.answer(f"media - {check}.")        
 
-@dp.message_handler(commands=["stickers"],commands_prefix="!",hasRights=True)
-async def send_stickes(message: types.Message):
+
+@dp.message_handler(commands=["stickers"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
+async def send_stickers(message: types.Message):
     # Get arguments
     check = checkArg(message.text)
     
@@ -317,7 +360,7 @@ async def send_stickes(message: types.Message):
         return
     
     # Get chat permissions
-    group_permissions = config.roles["group_permissions"]
+    group_permissions = config.group_permissions
 
     # Set permissions.
     chat_permissions = ChatPermissions(
@@ -337,7 +380,9 @@ async def send_stickes(message: types.Message):
     if status:
         await message.answer(f"stickes - {check}.")
 
-@dp.message_handler(commands=["warn"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["w","warn"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def warn_user(message: types.Message):
     # Get information
     command = await getCommandArgs(message)
@@ -348,7 +393,7 @@ async def warn_user(message: types.Message):
     
     if (user is None):
         await message.answer((
-            "Usage:!warn @username reason=None\n"
+            "Usage:!warn (@username/id) reason=None.\n"
             "Reply to a message or use with username/id.")
         )
         return
@@ -361,60 +406,44 @@ async def warn_user(message: types.Message):
     
     database.create_restriction(user.user_id, admin.id, "warn", reason)
 
-@dp.message_handler(commands=["reload"],commands_prefix="!")
+
+@dp.message_handler(commands=["reload"],commands_prefix="!",available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
 async def reload(message:types.Message):
     await utils.check_user_data()
     
     group = await bot.get_chat(message.chat.id)
     group_permissions = dict(group["permissions"])
-    
-    with open("config/roles.json","r") as jsonfile:
-        data = json.load(jsonfile)
-    
-    if group_permissions.keys() != data["group_permissions"].keys():
-        await message.answer("Add some permissions to roles.json")
-        return
-
+     
     for permission in group_permissions.keys():
-        data["group_permissions"][permission] = group_permissions[permission]
-    
-    with open("config/roles.json", "w") as jsonfile:
-        json.dump(data, jsonfile,indent=4)
+        config.group_permissions[permission] = group_permissions[permission]
 
     await message.answer(f"✅ The synchronization was successful.")
 
-@dp.message_handler(commands=["srole"],commands_prefix="!",hasRights=True)
+
+@dp.message_handler(commands=["set_role"],commands_prefix="!",
+    available_roles=[MemberRoles.ADMIN])
 async def set_role(message:types.Message):
     command = await getCommandArgs(message)
     new_role = getArgument(command.arguments)
-    
-    roles = config.roles
-   
+
     user = command.user
     admin = database.search_single_member(Member.user_id,message.from_user)
     
-    if (admin is None):
+    if (user is None) or (new_role is None):
+        await message.answer((
+            "!srole (@username|id) role(owner,admin,helper,member).\n"
+            "Reply to a message or use with username."
+        ))
         return
 
-    if (user is None) or (new_role is None):
-        await message.answer("""
-            !srole @username/id role(owner,admin,helper,member)
-Reply to a message or use with username.""")
-        return
-    
-    if not (new_role in roles["level"].keys()):
+    if not (new_role in [member.value for member in MemberRoles]):
         await message.answer(f"Role {new_role} not exists.")
         return
-   
+    
     if (admin.user_id == user.user_id):
         await message.answer("❌ You can't set role yourself.")
         return
-    
-    if (roles['level'][new_role] > roles['level'][admin.role]):
-        await message.answer("Your rank is not high enough to change roles.")
-        return
-    
+
     database.update_member_data(user.user_id,[Member.role],[new_role])
     
-    await message.answer(f"{new_role.capitalize()} role set for [{user.first_name}](tg://user?id={user.user_id}).",  
-        parse_mode="Markdown")
+    await message.answer(f"{new_role.capitalize()} role set for [{user.first_name}](tg://user?id={user.user_id}).",parse_mode="Markdown")

@@ -86,7 +86,7 @@ class Database:
             return False
         
         for i in range(len(newvalues)):
-            query = Member.update({fieldnames[i]:newvalues[i]}).where(Member.user_id == user_id)
+            query = Member.update({fieldnames[i]:newvalues[i]}).where(Member.user_id == user_id).execute()
             if (query is None):
                 return False
         

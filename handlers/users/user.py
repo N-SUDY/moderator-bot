@@ -19,9 +19,9 @@ from keyboards.inline.callback_data import report_callback
 @dp.message_handler(commands=["start","help"],chat_type=[types.ChatType.PRIVATE])
 async def start_command_private(message:types.Message):
     await message.answer((
-        "Hello,**{message.from_user.first_name}**!\n"
-        "\t\tMy commands:\n"
-        "\t\t/help , /start - read this message.")
+        f"Hello,**{message.from_user.first_name}**!\n"
+        "My commands:\n"
+        "\t\t/help /start - read this message.")
         ,parse_mode="Markdown",reply_markup=menu
     )
 

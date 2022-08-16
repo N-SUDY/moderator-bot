@@ -5,6 +5,14 @@ from playhouse.db_url import connect
 
 from datetime import datetime, date
 
+from enum import Enum
+class MemberRoles(Enum):
+    OWNER  = "owner"
+    ADMIN  = "admin"
+    HELPER = "helper"
+    MEMBER = "member"
+
+
 db = connect(config.db_url)
 
 class Member(Model):
@@ -22,7 +30,6 @@ class Member(Model):
         database = db
 
 class Restriction(Model):
-    restriction_id = BigIntegerField()
     operation   = CharField()
     
     from_admin = ForeignKeyField(Member,lazy_load=False) 

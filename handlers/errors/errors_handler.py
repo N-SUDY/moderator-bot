@@ -15,9 +15,9 @@ async def errors_handler(update, exception):
     await update.message.answer("Error happaned!\nBot terminated!")
 
     await bot.send_message(
-        config.telegram_log_chat_id,
+        config.second_group_id,
         f"**Bot terminated**!\nException:{exception}",
         parse_mode="Markdown"
     )
 
-    logging.info(f"Bot terminated!Exception:{exception}")
+    logging.info(f"Bot terminated!")

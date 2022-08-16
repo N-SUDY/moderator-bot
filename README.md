@@ -32,7 +32,7 @@ Logging admin command actions in database.
 | `db_url`                          | Connection info to database      |
 | `api_id` and `api_hash`           | Telegram application data        |
 | `group_id`                        | Group id                         |
-| `telegram_log_chat`               | Seconds group for admins         |
+| `second_group_id`                 | Seconds group for admins         |
 | `vt_api`                          | VirusTotalAPI token (optionaly)  |
 
 ## TODO  

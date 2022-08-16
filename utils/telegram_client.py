@@ -16,7 +16,6 @@ class TelegramClient:
         members = []
 
         async for member in self.client.get_chat_members(chat_id):
-            
             try:
                 username = member.user.username
             except AttributeError:

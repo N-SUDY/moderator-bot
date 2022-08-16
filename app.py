@@ -4,8 +4,14 @@ from aiogram import executor
 from database import models
 
 from load import dp, bot
+import filters
+
+dp.filters_factory.bind(filters.AvaibleRolesFilter)
+dp.filters_factory.bind(filters.ReplayMessageFilter)
+
 import handlers
 import config
+
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

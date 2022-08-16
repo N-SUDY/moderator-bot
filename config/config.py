@@ -1,5 +1,3 @@
-import json
-
 from aiogram import Dispatcher,Bot
 from environs import Env
 
@@ -12,7 +10,7 @@ use_webhook = True
 token = env.str("bot_token")
 
 group_id = env.str("group_id")
-telegram_log_chat_id = env.str("log_group_id")
+second_group_id = env.str("second_group_id")
 
 # Telegram Application
 api_id = env.int("api_id")
@@ -21,8 +19,16 @@ api_hash = env.str("api_hash")
 # Virus Total API
 vt_api = env.str("vt_api")
 
-with open("config/roles.json","r") as jsonfile:
-    roles = json.load(jsonfile)
+group_permissions = {
+    "can_send_messages":True,
+    "can_send_media_messages":False,
+    "can_send_other_messages":True,
+    "can_send_polls":False,
+    "can_invite_users":False,
+    "can_change_info":False,
+    "can_add_web_page_previews":False,
+    "can_pin_messages":False
+}
 
 db_url = env.str("db_url")
 

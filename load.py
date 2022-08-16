@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import config
 import utils
-import filters
+
 
 from database.database import Database
 
@@ -23,7 +23,3 @@ bot = Bot(
 )
 
 dp = Dispatcher(bot, storage=storage)
-
-dp.filters_factory.bind(filters.IsAdminFilter)
-dp.filters_factory.bind(filters.ReplayMessageFilter)
-dp.filters_factory.bind(filters.UserHasRights)
