@@ -13,7 +13,6 @@ import handlers
 import config
 
 
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 WEBAPP_HOST = '127.0.0.1'
