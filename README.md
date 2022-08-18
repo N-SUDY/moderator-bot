@@ -40,6 +40,7 @@ Logging admin command actions in database.
 - [ ] Analys file for malware                   🔎  
 - [ ] Paste text to PasteBin or PrivNote        📋
 - [ ] Site for group moderator                  🌍
+- [ ] Fix database errors ForeignKeys 
 
 ## Support 
 Every investition helps in maintaining this project and making it better.
