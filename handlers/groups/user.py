@@ -1,9 +1,7 @@
 from load import bot, dp, types
 
 import config
-
-from load import database
-from database.models import Member
+from database import Member
 
 @dp.message_handler(commands=["leave"],chat_type=[types.ChatType.SUPERGROUP])
 async def leave_group(message:types.Message):
@@ -14,8 +12,9 @@ async def leave_group(message:types.Message):
     if (len(args) < 1) or not ( ' '.join(args[1:]) == "I UNDERSTAND" ):
         await message.answer("Для того чтобы покинуть чат вам нужно ввести /leave I UNDERSTANT!")
         return
-     
-    database.delete_user(user.id)  
+    
+    # TODO: rewrite it 
+    # database.delete_user(user.id)  
 
     # Ban user and save (bool)
     status = await bot.kick_chat_member(chat_id=message.chat.id,user_id=user.id,until_date=None)
@@ -37,17 +36,15 @@ async def start_command_group(message:types.Message):
 
 @dp.message_handler(commands=["bio","me"],chat_type=[types.ChatType.SUPERGROUP])
 async def get_information(message: types.Message):
-    user = database.search_single_member(Member.user_id,message.from_user.id)
+    user = Member.search(Member.user_id, message.from_user.id)
     
-    role_level = config.roles["level"]
+    if (not user):
+        await message.answer("Something wrong!")
+        return
 
-    if (user is None):
-        await message.answer("❌Sorry,you not member group.")
-        return 
-    
     await message.answer((
-        f"User:[{user.first_name}](tg://user?id={user.user_id})\n"
-        f"level:{role_level[user.role]}\n"),
+        f"[{user.first_name}](tg://user?id={user.user_id}) ({user.role})\n"
+        f"Warns: {user.warns}/{config.limit_of_warns}"),
         parse_mode="Markdown"
     )
 

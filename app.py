@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import logging
 from aiogram import executor
-from database import models
+from database import build
+
 
 from load import dp, bot
 import filters
@@ -11,7 +12,6 @@ dp.filters_factory.bind(filters.ReplayMessageFilter)
 
 import handlers
 import config
-
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -43,9 +43,9 @@ async def on_shutdown(dp):
     await dp.storage.wait_closed()
 
 def main() -> None:
-    models.build()
+    build()
 
-    if config.use_webhook:
+    if config.USE_WEBHOOK:
         executor.start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
@@ -58,7 +58,6 @@ def main() -> None:
 
     else:
         executor.start_polling(dp,skip_updates=True)
-            
 
 if __name__ == '__main__':
     main()

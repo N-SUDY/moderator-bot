@@ -1,6 +1,5 @@
-from load import dp, database, types
-from database.models import Member
-
+from load import dp, types
+from database import Member
 
 # TODO: fix it
 # import utils
@@ -21,13 +20,18 @@ async def welcome_message(message:types.Message):
     # User
     user = message.from_user 
     
-    exists = database.check_data_exists(Member.user_id,user.id)
-    
+    exists = Member.exists(Member.user_id,user.id)
+        
     if (exists):
         await message.answer("Спасибо что вы с нами.")
 
     if not (exists):
-        database.register_user(user.id,user.first_name,user.username)
+        Member.create(
+            user_id = user.id,
+            first_name = user.first_name,
+            username = user.username,
+        )
+
         # TODO: translate it    
         await message.answer((
             f"Привет,{user.first_name}\n"
@@ -48,8 +52,6 @@ async def welcome_message(message:types.Message):
 #         for user_message in message.text.lower().split():
 #             if (y in user_message):await message.delete()
 
-# Joke
 @dp.message_handler(content_types=types.ContentType.VOICE)
 async def voice_message(message:types.Message):
-    photo = types.InputFile(path_or_bytesio="media/photo.jpg")
-    await message.answer_photo(photo)
+    pass

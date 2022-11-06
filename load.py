@@ -6,12 +6,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import config
 import utils
 
-
-from database.database import Database
-
-
-database = Database()
-
 storage = MemoryStorage()
 
 # Create client connection

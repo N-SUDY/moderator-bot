@@ -1,5 +1,5 @@
-from load import dp,types,database,bot
-from database.models import Member
+from load import dp, types, bot
+from database import Member, Restriction
 
 from aiogram.types import KeyboardButton,ReplyKeyboardMarkup
 from aiogram.types.reply_keyboard import ReplyKeyboardRemove
@@ -19,7 +19,7 @@ from keyboards.inline.callback_data import report_callback
 @dp.message_handler(commands=["start","help"],chat_type=[types.ChatType.PRIVATE])
 async def start_command_private(message:types.Message):
     await message.answer((
-        f"Hello,**{message.from_user.first_name}**!\n"
+        f"Hi, **{message.from_user.first_name}**!\n"
         "My commands:\n"
         "\t\t/help /start - read this message.")
         ,parse_mode="Markdown",reply_markup=menu
@@ -44,28 +44,29 @@ async def about_us(message:types.Message):
 
 @dp.message_handler(Text(equals=["Check restrictions"]),state=None)
 async def check_for_restrict(message:types.Message):
-    user = message.from_user
-    restrictions = database.search_user_restriction(user_id=user.id)
+    user = Member.get(Member.user_id == message.from_user.id)
+    restrictions = Restriction.search(to_user=user)
 
-    if (restrictions is None):
+    if (not restrictions):
         await message.answer("✅No restrictions.")
         return
 
     for restriction in restrictions:
-        callback = report_callback.new(user_id=message.from_user.id)
+        callback = report_callback.new(restriction_id=restriction.id)
         markup = report_button("✉️ Report restriction",callback)
 
-        await message.answer(f"Restriction\n{restriction.operation}\nReason:{restriction.reason}\nDate:{restriction.date}",reply_markup=markup)
+        await message.answer(f"Restriction\n{restriction.operation}\nReason:{restriction.reason}\nDate:{restriction.timestamp}",
+            reply_markup=markup)
         
     await States.state1.set() 
 
 @dp.callback_query_handler(text_contains="report_restriction",state=States.state1)
-async def report_restriction(call:CallbackQuery,state:FSMContext):
+async def report_restriction(call:CallbackQuery, state:FSMContext):
     await call.answer(cache_time=60)
     
-    # callback_data  = call.data
-    # restriction_id = callback_data.split(":")[1]
-    
+    callback_data  = call.data
+    restriction_id = callback_data.split(":")[1]
+
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     cancel = KeyboardButton("❌ Cancel")
     markup.add(cancel)
@@ -73,31 +74,34 @@ async def report_restriction(call:CallbackQuery,state:FSMContext):
     await state.update_data(restriction_id=restriction_id)
 
     await call.message.answer("Please,enter your report.",reply_markup=markup)
+    
+    await States.next()
 
 @dp.message_handler(state=States.state2)
-async def get_message_report(message: types.Message,state:FSMContext):
+async def get_message_report(message:types.Message, state:FSMContext):
     answer = message.text
-    
-    if not ("Cancel" in answer):
-        
-        restriction = database.search_user_restriction(message.from_user.id)
 
+    if not ("Cancel" in answer):
+        data = await state.get_data()
+        restriction_id = data.get("restriction_id") 
+        restriction = Restriction.search(id=restriction_id)
+        
         if (restriction is None):
             return
 
-        #from_admin = restriction.from_admin
-        #to_user    = restriction.to_user
+        from_user  = restriction.from_user
+        to_user    = restriction.to_user
         
         reason = restriction.reason
         if (not reason):
             reason = "No reason"
 
-        await bot.send_message(config.telegram_log_chat_id,(
+        await bot.send_message(config.second_group_id,(
             f"Report on restriction #{restriction_id}\n"
-            f"From admin:[{from_admin.first_name}](tg://user?id={from_admin.id})\n"
-            f"To user:[{from_admin.first_name}](tg://user?id={to_user.id})\n"
+            f"From user:[{from_user.first_name}](tg://user?id={from_user.id})\n"
+            f"To user:[{from_user.first_name}](tg://user?id={to_user.id})\n"
             f"Reason:{reason}\n"
-            f"Message:{answer}"
+            f"{answer}"
         ),parse_mode="Markdown")
         
         await message.answer("Report restriction sended",reply_markup=ReplyKeyboardRemove())

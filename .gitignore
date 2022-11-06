@@ -9,3 +9,4 @@ modules/__pycache__
 pyrightconfig.json
 session.session
 session.session-journal
+venv
