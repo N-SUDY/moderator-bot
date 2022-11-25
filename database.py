@@ -61,7 +61,6 @@ class Member(Model):
         database = db
 
 class Restriction(Model):
-    # TODO: not forget rename all operation to action
     action     = CharField()
     
     from_user  = ForeignKeyField(Member, lazy_load=True) 
@@ -83,5 +82,12 @@ class Restriction(Model):
         db_table = "auditlog"
         database = db
 
-def build() -> None:
-    db.create_tables([Member,Restriction])
+# if not db.get_columns('members'):
+#     db.create_tables([Member,Restriction])
+#     logging.warning("Members table is empty, you need get data(run !reload)")
+#
+# if Member.select().count() == 0:
+#     logging.warning("Members table is empty, you need get data(run !reload)")
+
+# def build() -> None:
+#     db.create_tables([Member,Restriction])

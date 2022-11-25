@@ -15,9 +15,8 @@ class AvaibleRolesFilter(BoundFilter):
         member = Member.search(Member.user_id,message.from_user.id)
         
         if (member is None):
-            return False
-
-        # member = database.search_single_member(Member.user_id,message.from_user.id)
+            await message.answer("Something wrong: user not found in database(u should run !reload)")
+            return
         
         if (member.role == "owner"):
             return True
