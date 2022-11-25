@@ -17,7 +17,7 @@ Enable/Disable stickers/images.
 Logging admin command actions in database.
 
 ## Installation
-- Required:Python3 3.x,poetry.
+- Required:Python3 3.x,poetry/pip.
 - Clone this repo.
 - Telegram API Service on port 5326.
 - Move the .env.dist text template to .env and configure him.
