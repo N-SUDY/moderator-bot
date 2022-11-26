@@ -37,6 +37,8 @@ Logging admin command actions in database.
 
 ## TODO  
 - [x] System roles                              🔒      
+- [ ] Add silent commands
+- [ ] Antiflood system                          
 - [ ] Analys file for malware                   🔎  
 - [ ] Paste text to PasteBin or PrivNote        📋
 - [ ] Site for group moderator                  🌍
