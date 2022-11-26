@@ -25,8 +25,8 @@ Logging admin command actions in database.
 
 ## Configuration .env
 
-| Name                              | Description                      |
-|-----------------------------------| -------------------------------- |
+| environment variables             | description                      |
+|-----------------------------------|----------------------------------|
 | `bot_token`                       | Telegram bot token               |
 | `telegram_bot_api_server`         | Telegram bot api server          |
 | `db_url`                          | Connection info to database      |
