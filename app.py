@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import logging
 from aiogram import executor
-# from database import build
 from database import db, Member, Restriction 
 
 from load import dp, bot

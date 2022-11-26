@@ -231,7 +231,7 @@ async def pin_message(message:types.Message):
 async def readonly_mode(message:types.Message):
     check = checkArg(message.text)
     
-    if (not check):
+    if (check is None):
         await message.answer("Usage:!ro on,enable,start/off,disable,off\n")
         return
 
@@ -240,10 +240,12 @@ async def readonly_mode(message:types.Message):
 
     # Set permissions
     if (check):
+        await message.answer("🚨 Emergency situation!")    
         chat_permissions = ChatPermissions( 
             can_send_messages=not check
         )
     else:
+        await message.answer("✅ The situation under control")
         chat_permissions = ChatPermissions(
             can_send_messages=group_permissions['can_send_messages'],
             can_send_media_messages=group_permissions["can_send_media_messages"],
@@ -255,72 +257,8 @@ async def readonly_mode(message:types.Message):
             can_pin_messages=group_permissions['can_pin_messages']
         )
     
-    status = await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions) 
+    await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions) 
     
-    if (status):
-        await message.answer(f"readonly - {check}")
-
-
-@dp.message_handler(commands=["media"],commands_prefix="!",available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
-async def media_content(message: types.Message):
-    check = checkArg(message.text)
-    
-    if (not check): 
-        await message.answer("Usage: !media on,enable,start/off,disable,off")
-        return
-
-    # Get chat permissions
-    group_permissions = config.group_permissions
-    
-    # Set permissions
-    chat_permissions = ChatPermissions(
-        can_send_messages=group_permissions['can_send_messages'],
-        can_send_media_messages=check,
-        can_send_other_messages=group_permissions['can_send_other_messages'],
-        can_send_polls=group_permissions['can_send_polls'],
-        can_invite_users=group_permissions['can_invite_users'],
-        can_change_info=group_permissions['can_change_info'],
-        can_add_web_page_previews=group_permissions['can_add_web_page_previews'],
-        can_pin_messages=group_permissions['can_pin_messages']
-    )
-
-    # Set chat pemissions and save results
-    status = await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions)
-    
-    if status:
-        await message.answer(f"media - {check}")        
-
-
-@dp.message_handler(commands=["stickers"],commands_prefix="!",available_roles=[MemberRoles.ADMIN,MemberRoles.HELPER])
-async def send_stickers(message: types.Message):
-    # Get arguments
-    check = checkArg(message.text)
-    
-    if (not check):
-        await message.answer("Usage: !stickers on,enable,start/off,disable,off")
-        return
-    
-    # Get chat permissions
-    group_permissions = config.group_permissions
-
-    # Set permissions.
-    chat_permissions = ChatPermissions(
-        can_send_messages=group_permissions['can_send_messages'],
-        can_send_media_messages=group_permissions['can_send_media_messages'],
-        can_send_other_messages=check,
-        can_send_polls=group_permissions['can_send_polls'],
-        can_invite_users=group_permissions['can_invite_users'],
-        can_change_info=group_permissions['can_change_info'],
-        can_add_web_page_previews=group_permissions['can_add_web_page_previews'],
-        can_pin_messages=group_permissions['can_pin_messages']
-    )
-
-    # Start and save to satus (bool)
-    status = await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions)
-    
-    if status:
-        await message.answer(f"stickes - {check}")
-
 
 @dp.message_handler(commands=["warn","w"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def warn_user(message: types.Message):
