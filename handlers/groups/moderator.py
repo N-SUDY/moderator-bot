@@ -229,23 +229,16 @@ async def pin_message(message:types.Message):
 
 @dp.message_handler(commands=["readonly","ro"],commands_prefix="!",available_roles=[MemberRoles.ADMIN])
 async def readonly_mode(message:types.Message):
-    check = checkArg(message.text)
-    
-    if (check is None):
-        await message.answer("Usage:!ro on,enable,start/off,disable,off\n")
-        return
-
-    # Get chat permissions
     group_permissions = config.group_permissions
+    status = config.group_permissions['can_send_messages']
 
-    # Set permissions
-    if (check):
-        await message.answer("🚨 Emergency situation!")    
+    if (status):
+        await message.answer("🔕 Readonly mode enabled!")    
         chat_permissions = ChatPermissions( 
-            can_send_messages=not check
+            can_send_messages=not status
         )
     else:
-        await message.answer("✅ The situation under control")
+        await message.answer("🔔 Readonly mode disabled!")
         chat_permissions = ChatPermissions(
             can_send_messages=group_permissions['can_send_messages'],
             can_send_media_messages=group_permissions["can_send_media_messages"],
@@ -257,6 +250,8 @@ async def readonly_mode(message:types.Message):
             can_pin_messages=group_permissions['can_pin_messages']
         )
     
+
+    config.group_permissions["can_send_messages"] = not status
     await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions) 
     
 
