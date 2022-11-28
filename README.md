@@ -15,10 +15,10 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Installation
 
-- Required:Python3 3.x,poetry/pip.
-- Clone this repo.
-- Telegram API Service on port 5326.
-- Move the .env.dist text template to .env and configure him.
+- Required:python3 3.x, poetry/pip
+- Clone this repo
+- Telegram API Service on port 5326
+- Move the .env.dist text template to .env and configure him
 - First start use `!reload` for parsing members and permissions
 
 ## Configuration .env
