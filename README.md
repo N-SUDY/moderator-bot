@@ -31,7 +31,6 @@ This bot is designed to simplify the moderation and management of Telegram group
 | `api_id` and `api_hash`           | Telegram application data        |
 | `group_id`                        | Group id                         |
 | `second_group_id`                 | Seconds group for admins         |
-| `vt_api`                          | VirusTotalAPI token (optionaly)  |
 
 ## TODO  
 
