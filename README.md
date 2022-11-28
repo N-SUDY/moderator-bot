@@ -6,6 +6,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 </p>
 
 ## Features
+
 * Ban,mute users(for a specified time) 
 * Member roles       
 * Report users
@@ -13,6 +14,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 * Save admin actions in database
 
 ## Installation
+
 - Required:Python3 3.x,poetry/pip.
 - Clone this repo.
 - Telegram API Service on port 5326.
@@ -34,12 +36,10 @@ This bot is designed to simplify the moderation and management of Telegram group
 ## TODO  
 
 - [ ] Docker
-- [ ] Systemd Unit
+- [ ] Systemd unit
 - [ ] Antiflood system                          
-- [ ] Add silent commands
-- [ ] Paste text to PasteBin or PrivNote        📋
-- [ ] Site for group moderator                  🌍
-- [x] Some fix in database 
+- [ ] Silent commands
+- [ ] Site for group moderator
 
 ## Support 
 Every investition helps in maintaining this project and making it better.
