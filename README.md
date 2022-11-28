@@ -15,7 +15,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Installation
 
-- Required:python3 3.x, poetry/pip
+- Required:python3.x, poetry/pip
 - Clone this repo
 - Telegram API Service on port 5326
 - Move the .env.dist text template to .env and configure him
@@ -25,12 +25,12 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 | environment variables             | description                      |
 |-----------------------------------|----------------------------------|
-| `bot_token`                       | Telegram bot token               |
-| `telegram_bot_api_server`         | Telegram bot api server          |
-| `db_url`                          | Connection info to database      |
-| `api_id` and `api_hash`           | Telegram application data        |
-| `group_id`                        | Group id                         |
-| `second_group_id`                 | Seconds group for admins         |
+| `bot_token`                       | telegram bot token               |
+| `telegram_bot_api_server`         | telegram bot api server          |
+| `db_url`                          | connection info to database      |
+| `api_id` and `api_hash`           | telegram application data        |
+| `group_id`                        | group id                         |
+| `second_group_id`                 | seconds group for admins         |
 
 ## TODO  
 
