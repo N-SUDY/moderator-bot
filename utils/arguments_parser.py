@@ -19,18 +19,24 @@ class CommandArguments:
     to_user:Member | None
     from_user:Member | None
     arguments:list
-
+    is_silent:bool
 async def getCommandArgs(message: types.Message) -> CommandArguments:
     """
         Describe user data and arguments from message
         !command (username|id) ...
     """
     
+    silent = False
+    
+    if (message.text.split()[0] == "s"):
+        silent = True
 
     arguments = message.text.split()[1:]
     to_user = None
     from_user = Member.search(Member.user_id, message.from_user.id)
     
+    
+
     # If message replied
     if (message.reply_to_message):
         to_user = Member.search(Member.user_id, message.reply_to_message)
@@ -49,8 +55,7 @@ async def getCommandArgs(message: types.Message) -> CommandArguments:
         
         arguments = arguments[1:]
 
-    return CommandArguments(to_user, from_user, arguments)
-
+    return CommandArguments(to_user, from_user, arguments,silent)
 
 def delete_substring_from_string(string:str,substring:str) -> str:
     string_list = string.split(substring)

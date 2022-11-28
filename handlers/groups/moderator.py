@@ -16,11 +16,11 @@ from utils import getCommandArgs, getArgument, checkArg, parse_duration, delete_
 #  replied=True  - If message is answer, continue.
 #  accessed_roles - list roles.
 
-@dp.message_handler(commands=["ban"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
+@dp.message_handler(commands=["ban","sban"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def ban_user(message: types.Message):
     command = await getCommandArgs(message)
     reason = getArgument(command.arguments)
-
+    
     to_user = command.to_user
     from_user = command.from_user
 
@@ -35,7 +35,7 @@ async def ban_user(message: types.Message):
     # Ban user and save (bool)
     status = await bot.kick_chat_member(chat_id=message.chat.id, user_id=to_user.user_id, until_date=None)
     
-    if status:
+    if status and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has banned [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
      
      
@@ -47,7 +47,7 @@ async def ban_user(message: types.Message):
         reason=reason,
     )
 
-@dp.message_handler(commands=["unban"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
+@dp.message_handler(commands=["unban","sunban"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def unban_user(message: types.Message):
     command = await getCommandArgs(message)
     
@@ -66,7 +66,7 @@ async def unban_user(message: types.Message):
     status = await bot.unban_chat_member(chat_id=message.chat.id, user_id=to_user.user_id) 
     
 
-    if status:
+    if status and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has unbanned [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
     
     Member.create(
@@ -94,7 +94,7 @@ async def info_user(message: types.Message):
         parse_mode="Markdown"
     )
 
-@dp.message_handler(commands=["kick"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
+@dp.message_handler(commands=["kick","skick"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def kick_user(message:types.Message):
     command = await getCommandArgs(message)
     arguments = command.arguments
@@ -115,7 +115,7 @@ async def kick_user(message:types.Message):
     status1 = await bot.kick_chat_member(chat_id=message.chat.id, user_id=to_user.user_id, until_date=None)
     status2 = await bot.unban_chat_member(chat_id=message.chat.id, user_id=to_user.user_id)
     
-    if (not status1 and status2):
+    if (not status1 and status2) and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has kicked [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
     
     
@@ -127,7 +127,7 @@ async def kick_user(message:types.Message):
     )
 
 
-@dp.message_handler(commands=["mute"],commands_prefix="!",available_roles=[MemberRoles.ADMIN])
+@dp.message_handler(commands=["mute","smute"],commands_prefix="!",available_roles=[MemberRoles.ADMIN])
 async def mute_user(message:types.Message):
     command = await getCommandArgs(message)  
     arguments = command.arguments
@@ -170,7 +170,7 @@ async def mute_user(message:types.Message):
         permissions=permissions
     )
     
-    if status:
+    if status and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has muted [{to_user.first_name}](tg://user?id={to_user.user_id}) for {duration_string}",parse_mode="Markdown")
     
 
@@ -182,7 +182,7 @@ async def mute_user(message:types.Message):
     )
 
 
-@dp.message_handler(commands=["unmute"],commands_prefix="!",available_roles=[MemberRoles.ADMIN])
+@dp.message_handler(commands=["unmute","sunmute"],commands_prefix="!",available_roles=[MemberRoles.ADMIN])
 async def umute_user(message: types.Message):
     # Get information
     command = await getCommandArgs(message)
@@ -220,7 +220,7 @@ async def umute_user(message: types.Message):
         permissions=permissions
     )
 
-    if status:
+    if status and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has unmuted [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
 
 @dp.message_handler(commands=["pin"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
@@ -231,7 +231,7 @@ async def pin_message(message:types.Message):
 async def readonly_mode(message:types.Message):
     group_permissions = config.group_permissions
     status = config.group_permissions['can_send_messages']
-
+    
     if (status):
         await message.answer("🔕 Readonly mode enabled!")    
         chat_permissions = ChatPermissions( 
@@ -249,11 +249,9 @@ async def readonly_mode(message:types.Message):
             can_add_web_page_previews=group_permissions['can_add_web_page_previews'],
             can_pin_messages=group_permissions['can_pin_messages']
         )
-    
 
     config.group_permissions["can_send_messages"] = not status
     await bot.set_chat_permissions(chat_id=message.chat.id, permissions=chat_permissions) 
-    
 
 @dp.message_handler(commands=["warn","w"],commands_prefix="!",available_roles=[MemberRoles.HELPER,MemberRoles.ADMIN])
 async def warn_user(message: types.Message):
