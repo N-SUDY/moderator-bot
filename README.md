@@ -6,15 +6,11 @@ This bot is designed to simplify the moderation and management of Telegram group
 </p>
 
 ## Features
-Ban,mute users(for a specified time).
-
-Report users.
-
-User complaints.
-
-Enable/Disable stickers/images.
-
-Logging admin command actions in database.
+* Ban,mute users(for a specified time) 
+* Member roles       
+* Report users
+* User complaints
+* Save admin actions in database
 
 ## Installation
 - Required:Python3 3.x,poetry/pip.
@@ -36,7 +32,7 @@ Logging admin command actions in database.
 | `vt_api`                          | VirusTotalAPI token (optionaly)  |
 
 ## TODO  
-- [x] System roles                              🔒       
+
 - [ ] Docker
 - [ ] Systemd Unit
 - [ ] Antiflood system                          
