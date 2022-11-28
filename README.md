@@ -36,13 +36,13 @@ Logging admin command actions in database.
 | `vt_api`                          | VirusTotalAPI token (optionaly)  |
 
 ## TODO  
-- [x] System roles                              🔒      
-- [ ] Add silent commands
+- [x] System roles                              🔒       
+- [ ] Docker
+- [ ] Systemd Unit
 - [ ] Antiflood system                          
-- [ ] Analys file for malware                   🔎  
+- [ ] Add silent commands
 - [ ] Paste text to PasteBin or PrivNote        📋
 - [ ] Site for group moderator                  🌍
-- [ ] Change PeeWee to SQLAlchemy
 - [x] Some fix in database 
 
 ## Support 
