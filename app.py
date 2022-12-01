@@ -26,11 +26,11 @@ async def on_startup(dp):
     if not db.get_columns('members'):
         db.create_tables([Member,Restriction])
         logging.warning("Member table is empty")
-        await bot.send_message(config.second_group_id,"First launch successful!")
-        await bot.send_message(config.second_group_id,"Member table is empty, run: `!reload`",parse_mode="Markdown")
+        await bot.send_message(config.second_group_id, "First launch successful!")
+        await bot.send_message(config.second_group_id, "Member table is empty, run: `!reload`",parse_mode="Markdown")
         
     elif Member.select().count() == 0:
-        await bot.send_message(config.second_group_id,"Member table is empty, run `!reload`",parse_mode="Markdown")
+        await bot.send_message(config.second_group_id, "Member table is empty, run `!reload`",parse_mode="Markdown")
         logging.warning("Member table is empty")
 
     from utils.notify_start import notify_started_bot

@@ -37,7 +37,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 - [ ] Docker
 - [ ] Systemd unit
 - [ ] Antiflood system                          
-- [x] Silent commands
+- [x] Silent commands 
 - [ ] Site for group moderator
 
 ## Support 

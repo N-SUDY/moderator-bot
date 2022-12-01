@@ -12,11 +12,7 @@ class AvaibleRolesFilter(BoundFilter):
         self.avaible_roles = available_roles
     
     async def check(self,message:types.Message):
-        member = Member.search(Member.user_id,message.from_user.id)
-        
-        if (member is None):
-            await message.answer("Something wrong: user not found in database(u should run !reload)")
-            return
+        member = Member.get(Member.user_id == message.from_user.id)
         
         if (member.role == "owner"):
             return True

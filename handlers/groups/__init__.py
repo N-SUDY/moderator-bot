@@ -1,3 +1,3 @@
-from . import moderator
-from . import user
-from . import service
+from . import simple_admin
+from . import main
+from . import new_chat_member

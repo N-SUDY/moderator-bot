@@ -1,5 +1,6 @@
 from pyrogram.client import Client
 
+
 class TelegramClient:
     def __init__(self,api_id,api_hash,token):
         self.api_id = api_id
@@ -10,7 +11,6 @@ class TelegramClient:
             api_id=self.api_id,api_hash=self.api_hash,
             bot_token=self.token
         )
-
 
     async def members_list(self,chat_id:int):
         members = []

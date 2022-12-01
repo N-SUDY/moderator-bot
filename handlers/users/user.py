@@ -45,7 +45,7 @@ async def about_us(message:types.Message):
 @dp.message_handler(Text(equals=["Check restrictions"]),state=None)
 async def check_for_restrict(message:types.Message):
     user = Member.get(Member.user_id == message.from_user.id)
-    restrictions = Restriction.search(to_user=user)
+    restrictions = Restriction.select().where(Restriction.to_user == user)
 
     if (not restrictions):
         await message.answer("✅No restrictions.")
@@ -54,10 +54,21 @@ async def check_for_restrict(message:types.Message):
     for restriction in restrictions:
         callback = report_callback.new(restriction_id=restriction.id)
         markup = report_button("✉️ Report restriction",callback)
-
-        await message.answer(f"Restriction\n{restriction.operation}\nReason:{restriction.reason}\nDate:{restriction.timestamp}",
-            reply_markup=markup)
         
+        from_user  = restriction.from_user
+        to_user    = restriction.to_user
+        
+        await message.answer(
+            (
+                f"Restriction #{restriction.id}\n"
+                f"from user: [{from_user.first_name}](tg://user?id={from_user.user_id})\n"
+                f"to user: [{from_user.first_name}](tg://user?id={to_user.user_id})\n"
+                f"{restriction.text}\n"
+                f"{restriction.timestamp}\n"
+            ),parse_mode="Markdown",
+            reply_markup=markup
+        )
+
     await States.state1.set() 
 
 @dp.callback_query_handler(text_contains="report_restriction",state=States.state1)
@@ -84,26 +95,32 @@ async def get_message_report(message:types.Message, state:FSMContext):
     if not ("Cancel" in answer):
         data = await state.get_data()
         restriction_id = data.get("restriction_id") 
-        restriction = Restriction.search(id=restriction_id)
-        
-        if (restriction is None):
-            return
+        restriction = Restriction.get(id=restriction_id)
 
         from_user  = restriction.from_user
         to_user    = restriction.to_user
         
-        reason = restriction.reason
-        if (not reason):
-            reason = "No reason"
+        await bot.send_message(config.second_group_id,
+            (
+                "Report on restriction #{}\n"
+                "from user: [{}](tg://user?id={})\n"
+                "to user: [{}](tg://user?id={})\n"
+                "{}\n"
+                "{}\n"
+                "Message:{}"
+            ).format(
+                restriction_id,
+                from_user.first_name,
+                from_user.user_id,
+                to_user.first_name,
+                to_user.user_id,
+                restriction.text,
+                restriction.timestamp,
+                answer,
+            )
+            ,parse_mode="Markdown"
+        )
 
-        await bot.send_message(config.second_group_id,(
-            f"Report on restriction #{restriction_id}\n"
-            f"From user:[{from_user.first_name}](tg://user?id={from_user.id})\n"
-            f"To user:[{from_user.first_name}](tg://user?id={to_user.id})\n"
-            f"Reason:{reason}\n"
-            f"{answer}"
-        ),parse_mode="Markdown")
-        
         await message.answer("Report restriction sended",reply_markup=ReplyKeyboardRemove())
     else:
         await message.answer("Operation cancaled",reply_markup=ReplyKeyboardRemove())
