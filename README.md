@@ -7,10 +7,10 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Features
 
-* Ban,mute users(for a specified time) 
-* Silent commands
+* Admin commands
 * Member roles       
 * Report users
+* Silent commands
 * User complaints
 * Save admin actions in database
 
@@ -41,6 +41,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 - [ ] Site for group moderator(in development)
 
 ## Support 
+
 Every investition helps in maintaining this project and making it better.
 
 <img src="https://img.shields.io/badge/btc-bc1qzp7q3rghzcx70534e7xf6tj0ns3dqvvnex80kf-green?logo=bitcoin">
