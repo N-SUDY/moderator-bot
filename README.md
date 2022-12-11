@@ -8,6 +8,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 ## Features
 
 * Ban,mute users(for a specified time) 
+* Silent commands
 * Member roles       
 * Report users
 * User complaints
@@ -36,9 +37,8 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 - [ ] Docker
 - [ ] Systemd unit
-- [ ] Antiflood system                          
-- [x] Silent commands 
-- [ ] Site for group moderator
+- [ ] Write antithrotling midlware middleware(anti flood system)                         
+- [ ] Site for group moderator(in development)
 
 ## Support 
 Every investition helps in maintaining this project and making it better.
