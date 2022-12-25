@@ -7,7 +7,7 @@ async def welcome_message(message:types.Message):
 
         
     if (user):
-        await message.answer("Спасибо что вы с нами.")
+        await message.answer(f"Hi, {user.first_name} again")
 
     if not (user):
         Member.create(
@@ -16,14 +16,12 @@ async def welcome_message(message:types.Message):
             username = message.from_user.username,
         )
 
-        # TODO: translate it    
         await message.answer((
-            f"Привет,{user.first_name}\n"
-            "Просим ознакомится с [правилами](https://telegra.ph/Pravila-CHata-Open-Source-05-29)\n"
-            "Советы на 'хороший тон':\n"
-            "\t\t1.Формулируй свою мысль в 1-2 предложения\n"
-            "\t\t1.Не задавай [мета](nometa.xyz) вопросы\n"),
-        parse_mode="Markdown")
+            f"Hi, **{user.first_name}**!\n"
+            "Please, read [chat rules]({})"
+            ).format(
+                "https://nometa.xyz"
+            ),parse_mode="Markdown")
     
 
     await message.delete()

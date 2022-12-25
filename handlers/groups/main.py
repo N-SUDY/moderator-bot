@@ -53,7 +53,7 @@ async def user_report(message: types.Message):
     args = message.text.split()
 
     if (len(args) != 2):
-        await message.reply("Please,enter reason.")
+        await message.answer("!report (reason)")
         return
 
     reported_user = message.reply_to_message.from_user
@@ -63,9 +63,9 @@ async def user_report(message: types.Message):
     await bot.send_message(
         config.second_group_id,
         (
-            "Жалоба на: [{}](tg://user?id={})\n"
-            "Пожаловался: [{}](tg://user?id={})\n"
-            "Причина: {}\n"
+            "Complaint about: [{}](tg://user?id={})\n"
+            "Complaint from: [{}](tg://user?id={})\n"
+            "Reason: {}\n"
             "{}"
         ).format(
             reported_user.first_name,
