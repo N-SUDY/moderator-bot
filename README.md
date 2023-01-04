@@ -1,10 +1,6 @@
 ## About
 This bot is designed to simplify the moderation and management of Telegram groups.
 
-<p align="center">
-    <img src="https://img.shields.io/badge/license-GPL-blue">
-</p>
-
 ## Features
 
 * Admin commands
