@@ -9,6 +9,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 * Admin commands
 * Member roles       
+* Automatic user data update
 * Report users
 * Silent commands
 * User complaints
@@ -45,3 +46,5 @@ This bot is designed to simplify the moderation and management of Telegram group
 Every investition helps in maintaining this project and making it better.
 
 <img src="https://img.shields.io/badge/btc-bc1qzp7q3rghzcx70534e7xf6tj0ns3dqvvnex80kf-green?logo=bitcoin">
+
+Don't donate to this wallet yet, I've lost access to it. Wait until I restore the wallet or create a new one.
