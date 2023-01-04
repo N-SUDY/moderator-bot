@@ -25,14 +25,16 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Configuration .env
 
-| environment variables             | description                      |
-|-----------------------------------|----------------------------------|
-| `bot_token`                       | telegram bot token               |
-| `telegram_bot_api_server`         | telegram bot api server          |
-| `db_url`                          | connection info to database      |
-| `api_id` and `api_hash`           | telegram application data        |
-| `group_id`                        | group id                         |
-| `second_group_id`                 | seconds group for admins         |
+| environment variables         | description                      |
+|-------------------------------|----------------------------------|
+| `bot_token`                   | telegram bot token               |
+| `api_id` and `api_hash`       | telegram application data        |
+| `group_id`                    | group id                         |
+| `second_group_id`             | seconds group for admins         |
+| `telegram_bot_api_server`     | telegram bot api server          |
+| `db_url`                      | connection info to database      |
+| `limit_of_warns`              | limit user warnings              |
+| `update_interval`             | interval for update of user data |    
 
 ## TODO  
 
