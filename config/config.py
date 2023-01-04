@@ -18,6 +18,9 @@ limit_of_warns = 5
 api_id = env.int("api_id")
 api_hash = env.str("api_hash")
 
+# Data update interval
+update_interval = env.int("update_interval") 
+
 group_permissions = {
     "can_send_messages":True,
     "can_send_media_messages":False,

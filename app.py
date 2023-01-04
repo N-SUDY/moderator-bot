@@ -3,7 +3,8 @@ import logging
 from aiogram import executor
 from database import db, Member, Restriction 
 
-from load import dp, bot
+from load import dp, bot, scheduler
+
 import filters
 
 dp.filters_factory.bind(filters.AvaibleRolesFilter)
@@ -39,9 +40,14 @@ async def on_startup(dp):
     from utils.default_commands import set_default_commands
     await set_default_commands(dp)
     
+    # Reloading users data
+    from utils import reload_users_data
+    scheduler.add_job(reload_users_data,"interval", seconds=config.update_interval)
+    scheduler.start()
+
     from load import tgc
     await tgc.client.start()
-
+    
     await bot.set_webhook(WEBHOOK_URL)
 
 async def on_shutdown(dp):
@@ -61,11 +67,11 @@ def main() -> None:
             on_shutdown=on_shutdown,
             skip_updates=True,
             host=WEBAPP_HOST,
-            port=WEBAPP_PORT,
+            port=WEBAPP_PORT
         )
 
     else:
         executor.start_polling(dp,skip_updates=True)
-
+        
 if __name__ == '__main__':
     main()

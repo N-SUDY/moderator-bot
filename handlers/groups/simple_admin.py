@@ -124,8 +124,6 @@ async def kick_user(message: types.Message):
     if (not status1 and status2) and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has kicked [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
     
-    
-
     Restriction.create(
         from_user=from_user,
         to_user=to_user,
@@ -167,7 +165,6 @@ async def mute_user(message:types.Message):
     if status and (not command.is_silent):
         await message.answer(f"[{from_user.first_name}](tg://user?id={from_user.user_id}) has muted [{to_user.first_name}](tg://user?id={to_user.user_id})",parse_mode="Markdown")
     
-
     Restriction.create(
         from_user=from_user,
         to_user=to_user,
@@ -290,7 +287,6 @@ async def warn_user(message: types.Message):
         await message.answer(f"[{to_user.first_name}](tg://user?id={to_user.user_id}) has been banned!",parse_mode="Markdown")
         await bot.kick_chat_member(chat_id=message.chat.id, user_id=to_user.user_id, until_date=None)
     
-
     Restriction.create(
         from_user=from_user,
         to_user=to_user,
@@ -304,43 +300,10 @@ async def warn_user(message: types.Message):
     commands_prefix="!"
 )
 async def reload(message: types.Message):
-    from load import tgc
+    from utils import reload_users_data
+    await reload_users_data()
     
-    owner_exists = Member.get_or_none(Member.role == "owner")
-    if (not owner_exists):
-        Member.create(
-            user_id = message.from_user.id,
-            first_name = message.from_user.first_name,
-            username = message.from_user.username,
-            role = "owner",
-        )
-
-    # TODO: do this every 1 hours    
-    members = await tgc.members_list(config.group_id)
-    
-    for member in members:
-        user = Member.get_or_none(Member.user_id == member["id"])
-        
-        if (not user):
-            Member.create(
-                user_id = member["id"],
-                first_name = member["first_name"],
-                username = member["username"],
-            )
-        else:
-            user.first_name = member["first_name"]
-            user.username = member["username"] 
-            user.save()
-
-    
-    group = await bot.get_chat(message.chat.id)
-    group_permissions = dict(group["permissions"])
-     
-    for permission in group_permissions.keys():
-        config.group_permissions[permission] = group_permissions[permission]
-
     await message.answer("Reloaded!")
-
 
 @dp.message_handler(
     commands=["setrole"],
