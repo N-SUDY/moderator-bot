@@ -1,0 +1,12 @@
+[Unit]
+Description=Telegram Bot API server
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/home/q/.config/telegram-bot-api/config.env
+WorkingDirectory=~
+ExecStart=/home/q/bin/telegram-bot-api --api-id=${api_id} --api-hash=${api_hash} --local --http-stat-ip-address=${ip} --http-port=${port} --dir=/home/q/.config/telegram-bot-api/
+
+[Install]
+WantedBy=multi-user.target
