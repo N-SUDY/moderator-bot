@@ -15,7 +15,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 - Required: python3.x, poetry/pip
 - Clone this repo
-- Telegram API Service on port 5326
+- Telegram API Service on port 5326(you can run systemd unit in systemd/)
 - Move the .env.dist text template to .env and configure him
 - First start use `!reload` for parsing members and permissions
 
@@ -35,7 +35,6 @@ This bot is designed to simplify the moderation and management of Telegram group
 ## TODO  
 
 - [ ] Docker
-- [ ] Systemd unit
 - [ ] Write antithrotling midlware middleware(anti flood system)                         
 - [ ] Site for group moderator(in development)
 
