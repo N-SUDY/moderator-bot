@@ -24,19 +24,15 @@ WEBHOOK_PATH = f'/bot{config.token}/'
 WEBHOOK_URL =  f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 async def on_startup(dp):
-    if not db.get_columns('members'):
-        db.create_tables([Member,Restriction])
-        logging.warning("Member table is empty")
-        await bot.send_message(config.second_group_id, "First launch successful!")
-        await bot.send_message(config.second_group_id, "Member table is empty, run: `!reload`",parse_mode="Markdown")
-        
-    elif Member.select().count() == 0:
-        await bot.send_message(config.second_group_id, "Member table is empty, run `!reload`",parse_mode="Markdown")
-        logging.warning("Member table is empty")
-
-    from utils.notify_start import notify_started_bot
-    await notify_started_bot(bot)
+    from utils.notify_start import notify_started_bot, database_is_empty
     
+    DATABASE_EMPTY = database_is_empty() 
+    if DATABASE_EMPTY:
+        await bot.send_message(config.second_group_id, 
+            "Member table is empty, run: `!reload`",parse_mode="Markdown")
+
+    await notify_started_bot(bot)
+     
     from utils.default_commands import set_default_commands
     await set_default_commands(dp)
     
@@ -58,7 +54,7 @@ async def on_shutdown(dp):
     await dp.storage.wait_closed()
 
 def main() -> None:
-     
+          
     if config.USE_WEBHOOK:
         executor.start_webhook(
             dispatcher=dp,
