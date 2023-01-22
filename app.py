@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 import logging
-from aiogram import executor
-from database import db, Member, Restriction 
 
+from aiogram import executor
 from load import dp, bot, scheduler
 
+
 import filters
+import config
+
 
 dp.filters_factory.bind(filters.AvaibleRolesFilter)
 dp.filters_factory.bind(filters.ReplayMessageFilter)
 
 import handlers
-import config
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -21,15 +22,16 @@ WEBAPP_PORT = 3001
 # Don`t touch anything!
 WEBHOOK_HOST = f'http://{WEBAPP_HOST}:{WEBAPP_PORT}'
 WEBHOOK_PATH = f'/bot{config.token}/'
-WEBHOOK_URL =  f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+
 
 async def on_startup(dp):
     from utils.notify_start import notify_started_bot, database_is_empty
     
-    DATABASE_EMPTY = database_is_empty() 
+    DATABASE_EMPTY = database_is_empty()
     if DATABASE_EMPTY:
-        await bot.send_message(config.second_group_id, 
-            "Member table is empty, run: `!reload`",parse_mode="Markdown")
+        await bot.send_message(config.second_group_id,
+            "Member table is empty, run: `!reload`", parse_mode="Markdown")
 
     await notify_started_bot(bot)
      
@@ -38,7 +40,7 @@ async def on_startup(dp):
     
     # Reloading users data
     from utils import reload_users_data
-    scheduler.add_job(reload_users_data,"interval", seconds=config.update_interval)
+    scheduler.add_job(reload_users_data, "interval", seconds=config.update_interval)
     scheduler.start()
 
     from load import tgc
@@ -46,12 +48,14 @@ async def on_startup(dp):
     
     await bot.set_webhook(WEBHOOK_URL)
 
+
 async def on_shutdown(dp):
     await bot.delete_webhook()
 
     # Close Redis connection.
     await dp.storage.close()
     await dp.storage.wait_closed()
+
 
 def main() -> None:
           
@@ -67,7 +71,8 @@ def main() -> None:
         )
 
     else:
-        executor.start_polling(dp,skip_updates=True)
+        executor.start_polling(dp, skip_updates=True)
         
+
 if __name__ == '__main__':
     main()

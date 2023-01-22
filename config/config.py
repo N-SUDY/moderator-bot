@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, Bot
 from environs import Env
 
+
 env = Env()
 env.read_env()
 
@@ -19,17 +20,17 @@ api_id = env.int("api_id")
 api_hash = env.str("api_hash")
 
 # Data update interval
-update_interval = env.int("update_interval") 
+update_interval = env.int("update_interval")
 
 group_permissions = {
-    "can_send_messages":True,
-    "can_send_media_messages":False,
-    "can_send_other_messages":True,
-    "can_send_polls":False,
-    "can_invite_users":False,
-    "can_change_info":False,
-    "can_add_web_page_previews":False,
-    "can_pin_messages":False
+    "can_send_messages": True,
+    "can_send_media_messages": False,
+    "can_send_other_messages": True,
+    "can_send_polls": False,
+    "can_invite_users": False,
+    "can_change_info": False,
+    "can_add_web_page_previews": False,
+    "can_pin_messages": False
 }
 
 db_url = env.str("db_url")

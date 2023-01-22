@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
 
+
 class ReplayMessageFilter(BoundFilter):
     """Check if message replied"""
     key = 'replied'
