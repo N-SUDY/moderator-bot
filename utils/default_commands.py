@@ -1,6 +1,9 @@
-async def set_default_commands(dp):
+async def set_default_commands(bot):
     from load import types
-    await dp.bot.set_my_commands([
-        types.BotCommand("start","Start bot"),
-        types.BotCommand("help","Help")
-    ])
+    
+    await bot.set_my_commands(
+        commands=[
+            types.BotCommand(command="start", description="Start bot"),
+            types.BotCommand(command="help", description="Help")
+        ]
+    )

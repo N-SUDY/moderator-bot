@@ -1,8 +1,10 @@
 from aiogram import Bot, Dispatcher
 from aiogram import types
-from aiogram.bot.api import TelegramAPIServer
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.client.telegram import TelegramAPIServer
+from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from aiogram.client.session.aiohttp import AiohttpSession
+
 
 import config
 import utils
@@ -15,9 +17,13 @@ tgc = utils.TelegramClient(config.api_id, config.api_hash, config.token)
 
 scheduler = AsyncIOScheduler()
 
-bot = Bot(
-    token=config.token,
-    server=TelegramAPIServer.from_base(config.telegram_api_server),
+session = AiohttpSession(
+    api=TelegramAPIServer.from_base(config.telegram_api_server),
 )
 
-dp = Dispatcher(bot, storage=storage)
+bot = Bot(
+    token=config.token,
+    session=session,
+)
+
+dp = Dispatcher(storage=storage)

@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 import logging
 
-from aiogram import executor
 from load import dp, bot, scheduler
 
+from aiohttp.web_app import Application
+from aiohttp.web import run_app
+from aiogram.webhook.aiohttp_server import (
+    SimpleRequestHandler,
+    setup_application
+)
 
-import filters
+
+# import filters
 import config
 
 
-dp.filters_factory.bind(filters.AvaibleRolesFilter)
-dp.filters_factory.bind(filters.ReplayMessageFilter)
+# dp.filters_factory.bind(filters.AvaibleRolesFilter)
+# dp.filters_factory.bind(filters.ReplayMessageFilter)
 
-import handlers
+# import handlers
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -25,18 +31,20 @@ WEBHOOK_PATH = f'/bot{config.token}/'
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 
-async def on_startup(dp):
+async def on_startup():
     from utils.notify_start import notify_started_bot, database_is_empty
     
     DATABASE_EMPTY = database_is_empty()
     if DATABASE_EMPTY:
-        await bot.send_message(config.second_group_id,
-            "Member table is empty, run: `!reload`", parse_mode="Markdown")
+        await bot.send_message(
+            config.second_group_id,
+            "Member table is empty, run: `!reload`", parse_mode="Markdown"
+        )
 
     await notify_started_bot(bot)
      
     from utils.default_commands import set_default_commands
-    await set_default_commands(dp)
+    await set_default_commands(bot)
     
     # Reloading users data
     from utils import reload_users_data
@@ -49,30 +57,30 @@ async def on_startup(dp):
     await bot.set_webhook(WEBHOOK_URL)
 
 
-async def on_shutdown(dp):
+async def on_shutdown():
     await bot.delete_webhook()
 
     # Close Redis connection.
     await dp.storage.close()
-    await dp.storage.wait_closed()
+    await bot.session.close()
 
-
+    
 def main() -> None:
-          
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+    
     if config.USE_WEBHOOK:
-        executor.start_webhook(
+        app = Application()
+        app["bot"] = bot
+        SimpleRequestHandler(
             dispatcher=dp,
-            webhook_path=WEBHOOK_PATH,
-            on_startup=on_startup,
-            on_shutdown=on_shutdown,
-            skip_updates=True,
-            host=WEBAPP_HOST,
-            port=WEBAPP_PORT
-        )
-
+            bot=bot,
+        ).register(app, path=WEBHOOK_PATH)
+        setup_application(app, dp, bot=bot)
+        run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
     else:
-        executor.start_polling(dp, skip_updates=True)
-        
+        dp.run_polling()
+
 
 if __name__ == '__main__':
     main()
