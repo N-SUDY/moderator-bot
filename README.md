@@ -36,7 +36,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 - [ ] Migrate to aiogram dev-3.0x
 - [ ] Docker
-- [ ] Write antithrotling midlware middleware(anti flood system)                         
+- [ ] Write antithrotling middleware(anti flood system)                         
 - [ ] Site for group moderator(in development)
 
 ## Support 
