@@ -1,50 +1,59 @@
 from load import bot, dp, types
-
+from aiogram import Bot
 import config
+from aiogram.filters import Command
+
+from filters import MessageReplied
+from filters import ChatTypeFilter
+
 from database import Member
 
+from aiogram.filters.chat_member_updated import \
+    ChatMemberUpdatedFilter, JOIN_TRANSITION, ChatMemberUpdated
 
-@dp.message_handler(content_types=["new_chat_members"])
-async def welcome_message(message: types.Message):
-    user = Member.get_or_none(Member.user_id == message.from_user.id)
+
+@dp.chat_member(
+    ChatMemberUpdatedFilter(member_status_changed=JOIN_TRANSITION)
+)
+async def welcome_message(event: ChatMemberUpdated, _bot: Bot):
+    user = Member.get_or_none(Member.user_id == event.from_user.id)
 
     if (user):
-        await message.answer(f"Hi, {user.first_name} again")
+        await _bot.send_message(
+            chat_id=event.chat.id,
+            text=f"Hi, {user.first_name} again"
+        )
 
     if not (user):
         Member.create(
-            user_id=message.from_user.id,
-            first_name=message.from_user.first_name,
-            username=message.from_user.username,
+            user_id=event.from_user.id,
+            first_name=event.from_user.first_name,
+            username=event.from_user.username,
+        )
+            
+        await _bot.send_message(
+            chat_id=event.chat.id,
+            text=f"Hi, [{user.first_name}](tg://user?id={user.id})!\n"
+            "Please, read [chat rules](https://nometa.xyz)"
         )
 
-        await message.answer((
-            f"Hi, **{user.first_name}**!\n"
-            "Please, read [chat rules]({})"
-            ).format("https://nometa.xyz"),
-            parse_mode="Markdown"
-        )
 
-    await message.delete()
-
-
-@dp.message_handler(
-    commands=["start", "help"],
-    chat_type=[types.ChatType.SUPERGROUP]
+@dp.message(
+    Command("start", "help"),
+    ChatTypeFilter("supergroup")
 )
 async def start_command_group(message: types.Message):
     await message.answer((
-        f"Hi,**{message.from_user.first_name}**!\n"
+        f"Hi, [{message.from_user.first_name}](tg://user?id={message.from_user.id})!\n"
         "My commands:\n"
         "    /help , /start - read the message\n"
-        "    /me   , /bio   - member information (if member group)"),
-        parse_mode="Markdown"
+        "    /me   , /bio   - member information (if member group)")
     )
 
 
-@dp.message_handler(
-    commands=["leave"],
-    chat_type=[types.ChatType.SUPERGROUP]
+@dp.message(
+    Command("leave"),
+    ChatTypeFilter("supergroup")
 )
 async def leave_group(message: types.Message):
     user = message.from_user
@@ -65,30 +74,28 @@ async def leave_group(message: types.Message):
         await message.answer((
             f"User [{user.first_name}](tg://user?id={user.id})"
             "has leaved chat for forever"
-            ), parse_mode="Markdown"
-        )
+        ))
     
     Member.delete().where(Member.user_id == user.id).execute()
 
 
-@dp.message_handler(
-    commands=["bio", "me"],
-    chat_type=[types.ChatType.SUPERGROUP]
+@dp.message(
+    Command("bio", "me"),
+    ChatTypeFilter("supergroup")
 )
 async def get_information(message: types.Message):
     user = Member.get(Member.user_id == message.from_user.id)
     
     await message.answer((
         f"[{user.first_name}](tg://user?id={user.user_id}) ({user.role})\n"
-        f"Warns: {user.warns}/{config.limit_of_warns}"),
-        parse_mode="Markdown"
-    )
+        f"Warns: {user.warns}/{config.limit_of_warns}"
+    ))
 
 
-@dp.message_handler(
-    commands=["report"],
-    replied=True,
-    chat_type=[types.ChatType.SUPERGROUP]
+@dp.message(
+    Command("report"),
+    MessageReplied(),
+    ChatTypeFilter("supergroup")
 )
 async def user_report(message: types.Message):
     args = message.text.split()
@@ -115,6 +122,5 @@ async def user_report(message: types.Message):
             reporter_user.id,
             reason,
             message.reply_to_message.link("link message", as_html=False)
-        ),
-        parse_mode="Markdown",
+        )
     )

@@ -24,6 +24,7 @@ session = AiohttpSession(
 bot = Bot(
     token=config.token,
     session=session,
+    parse_mode="Markdown"
 )
 
 dp = Dispatcher(storage=storage)

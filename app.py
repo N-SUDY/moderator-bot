@@ -11,14 +11,9 @@ from aiogram.webhook.aiohttp_server import (
 )
 
 
-# import filters
 import config
 
-
-# dp.filters_factory.bind(filters.AvaibleRolesFilter)
-# dp.filters_factory.bind(filters.ReplayMessageFilter)
-
-# import handlers
+import handlers
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -38,7 +33,7 @@ async def on_startup():
     if DATABASE_EMPTY:
         await bot.send_message(
             config.second_group_id,
-            "Member table is empty, run: `!reload`", parse_mode="Markdown"
+            "Member table is empty, run: `!reload`"
         )
 
     await notify_started_bot(bot)

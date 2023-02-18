@@ -14,18 +14,17 @@ async def reload_users_data():
 
         if (not user):
             Member.create(
-                user_id = member["id"],
-                first_name = first_name,
-                username = member["username"],
+                user_id=member["id"],
+                first_name=first_name,
+                username=member["username"],
             )
         else:
             user.first_name = first_name
-            user.username = member["username"] 
+            user.username = member["username"]
             user.save()
 
-
     group = await bot.get_chat(config.group_id)
-    group_permissions = dict(group["permissions"])
-     
+    group_permissions = group.permissions.__dict__
+
     for permission in group_permissions.keys():
         config.group_permissions[permission] = group_permissions[permission]

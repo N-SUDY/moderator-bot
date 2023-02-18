@@ -1,18 +1,15 @@
 from aiogram import types
-from aiogram.dispatcher.filters import BoundFilter
-
+from aiogram.filters import Filter
 from database import Member, MemberRoles
 
 
-class AvaibleRolesFilter(BoundFilter):
+class AvailableRoles(Filter):
     """Filter accessed roles"""
     
-    key = "available_roles"
+    def __init__(self, *args):
+        self.avaible_roles: list[MemberRoles] = args
 
-    def __init__(self, available_roles: list[MemberRoles]):
-        self.avaible_roles = available_roles
-    
-    async def check(self, message: types.Message):
+    async def __call__(self, message: types.Message) -> bool:
         member = Member.get(Member.user_id == message.from_user.id)
         
         if (member.role == "owner"):
