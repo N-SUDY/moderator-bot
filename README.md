@@ -3,13 +3,10 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Features
 
-* Admin commands
-* Member roles       
-* Automatic user data update
+* Base admin commands
+* Member roles
 * Report users
-* Silent commands
 * User complaints
-* Save admin actions in database
 
 ## Installation
 
