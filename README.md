@@ -3,18 +3,16 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## Features
 
-* Base admin commands
-* Member roles
-* Report users
-* User complaints
+* User roles
+* User complains system
+* Admin activity log
 
-## Installation
+## Up
 
-- Required: python3.x, poetry/pip
-- Clone this repo
-- Telegram API Service on port 5326(you can run systemd unit in systemd/)
-- Move the .env.dist text template to .env and configure him
-- First start use `!reload` for parsing members and permissions
+- Required: python3.11
+- Up Telegram Bot API server on port 5326
+- Use the .env.dist template example for creating .env 
+- After first start use `!reload` for parsing members list and permissions 
 
 ## Configuration .env
 
@@ -31,10 +29,10 @@ This bot is designed to simplify the moderation and management of Telegram group
 
 ## TODO  
 
-- [x] Migrate to aiogram dev-3.0b6
-- [ ] Docker
-- [ ] Write antithrotling middleware(anti flood system)                         
-- [ ] Site for group moderator(in development)
+- [ ] Multigroup support
+- [ ] Integrate project with docker 
+- [ ] Flood detection
+- [ ] Web(in development)
 
 ## Support 
 
