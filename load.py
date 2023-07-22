@@ -13,7 +13,7 @@ import utils
 storage = MemoryStorage()
 
 # Create client connection
-tgc = utils.TelegramClient(config.api_id, config.api_hash, config.token)
+tgc = utils.TelegramClient(config.api_id, config.api_hash, config.bot_token)
 
 scheduler = AsyncIOScheduler()
 
@@ -22,7 +22,7 @@ session = AiohttpSession(
 )
 
 bot = Bot(
-    token=config.token,
+    token=config.bot_token,
     session=session,
     parse_mode="Markdown"
 )

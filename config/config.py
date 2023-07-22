@@ -8,7 +8,7 @@ env.read_env()
 USE_WEBHOOK = True
 
 # bot token
-token = env.str("bot_token")
+bot_token = env.str("bot_token")
 
 group_id = env.int("group_id")
 second_group_id = env.int("second_group_id")
@@ -33,7 +33,6 @@ group_permissions = {
     "can_pin_messages": False
 }
 
-db_url = env.str("db_url")
+db_uri = env.str("db_uri")
 
-telegram_api_server = env.str("telegram_api_server").split(":")
-telegram_api_server = f"http://{telegram_api_server[0]}:{telegram_api_server[1]}"
+telegram_api_server = env.str("telegram_api_server")

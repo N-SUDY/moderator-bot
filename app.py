@@ -22,7 +22,7 @@ WEBAPP_PORT = 3001
 
 # Don`t touch anything!
 WEBHOOK_HOST = f'http://{WEBAPP_HOST}:{WEBAPP_PORT}'
-WEBHOOK_PATH = f'/bot{config.token}/'
+WEBHOOK_PATH = f'/bot{config.bot_token}/'
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 

@@ -1,11 +1,11 @@
 import re
-import typing
+from typing import Optional
 
 import datetime
 from load import types
 
 
-def parse_timedelta(value: str) -> typing.Optional[datetime.timedelta]:
+def parse_timedelta(value: str) -> Optional[datetime.timedelta]:
     regex = r'(?:(\d+)(?:d|д))?(?:(\d+)(?:h|ч))?(?:(\d+)(?:m|м))?(?:(\d+)(?:s|с))?'
     specification = value.strip().replace(' ', '')
     match = re.fullmatch(regex, specification)
@@ -19,7 +19,7 @@ def parse_timedelta(value: str) -> typing.Optional[datetime.timedelta]:
         )
 
 
-def parse_timedelta_from_message(message: types.Message) -> typing.Optional[datetime.timedelta]:
+def parse_timedelta_from_message(message: types.Message) -> Optional[datetime.timedelta]:
     _, *args = message.text.split()
         
     if args:

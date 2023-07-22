@@ -1,11 +1,19 @@
-import typing
+from typing import Optional
 from dataclasses import dataclass
 from database import Member
 
 from load import types
 
 
-def get_argument(arguments:list,index:int=0) -> typing.Optional[str]:
+@dataclass
+class CommandArguments:
+    to_user: Optional[Member]
+    from_user: Optional[Member]
+    arguments: list
+    is_silent: bool
+
+
+def get_argument(arguments: list, index: int = 0) -> Optional[str]:
     """ Get element from a list.If element not exist return None """
     if not (arguments):
         return None
@@ -15,12 +23,7 @@ def get_argument(arguments:list,index:int=0) -> typing.Optional[str]:
     else:
         return None
 
-@dataclass
-class CommandArguments:
-    to_user:Member | None
-    from_user:Member | None
-    arguments:list
-    is_silent:bool
+
 async def get_command_args(message: types.Message) -> CommandArguments:
     """Describe user data and arguments from message"""
     

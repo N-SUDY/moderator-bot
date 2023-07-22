@@ -23,7 +23,7 @@ This bot is designed to simplify the moderation and management of Telegram group
 | `group_id`                    | group id                         |
 | `second_group_id`             | seconds group for admins         |
 | `telegram_bot_api_server`     | telegram bot api server          |
-| `db_url`                      | connection info to database      |
+| `db_uri`                      | connection info to database      |
 | `limit_of_warns`              | limit user warnings              |
 | `update_interval`             | interval for update of user data |    
 
